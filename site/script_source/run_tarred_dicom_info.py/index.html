@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>Run tarred dicom info.py - Processing Pipeline</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../../css/theme.css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Run tarred dicom info.py";
+    var mkdocs_page_input_path = "script_source/run_tarred_dicom_info.py.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href="../.." class="icon icon-home"> Processing Pipeline</a>
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../overview/">Overview</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../scripts_temp/">Scripts</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../..">Processing Pipeline</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Run tarred dicom info.py</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <pre><code class="python">import os
+import pwd
+import sys
+import json
+import subprocess
+
+from shlex import split
+from datetime import datetime
+from pathlib import Path
+from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
+
+SCRIPT_FILE = Path(__file__).resolve()
+SCRIPT_DIR = SCRIPT_FILE.parent
+QSUB_SCRIPT = SCRIPT_DIR.joinpath('singularity_template.bash')
+PYTHON_SCRIPT = str(SCRIPT_DIR
+                    .joinpath('..', 'cli_tarred_dicom_info.py')
+                    .resolve())
+
+CONFIGURATION = SCRIPT_DIR.joinpath('configuration.json')
+with CONFIGURATION.open() as f:
+    configuration = json.load(f)
+    CONTAINER = Path(configuration['containers']['miniconda'])
+
+if not CONTAINER.is_file():
+    raise Exception(f'Container file does not exist: {CONTAINER}')
+
+def user_name():
+    return pwd.getpwuid(os.getuid()).pw_name
+
+def make_readable_command(cmd):
+    results = [cmd[0]] + ['    ' + x for x in cmd[1:]]
+    return ' \\\n'.join(results)
+
+def get_parser():
+    &quot;&quot;&quot;Define parser object&quot;&quot;&quot;
+
+    parser = ArgumentParser(description='Get dicom information from tar.gz file.',
+                            formatter_class=ArgumentDefaultsHelpFormatter)
+
+    # REQUIRED
+    parser.add_argument('--in_files', action='store', nargs='+',
+                        help='the tar.gz files', required=True)
+
+    # OPTIONAL TORQUE
+    parser.add_argument('--email', action='store', default=(user_name() + '@mcw.edu'),
+                        help='email address')
+    parser.add_argument('--mem', action='store', type=int, default=10,
+                        help='qsub memory in gigabytes')
+    parser.add_argument('--walltime', action='store', default='00:30:00',
+                        help='qsub walltime')
+    parser.add_argument('--testing', action='store_true',
+                        help='do not run the command, only print information')
+
+    return parser
+
+def main():
+    parser = get_parser()
+    args = parser.parse_args()
+    in_files = [Path(x).resolve() for x in args.in_files]
+
+    email = args.email
+    mem = args.mem
+    walltime = args.walltime
+
+    # check files here
+    for one_file in in_files:
+        if not one_file.is_file():
+            raise Exception(f'in_file is not a file: {one_file}')
+    in_files = ' '.join(str(x) for x in in_files)
+
+    log_dir = SCRIPT_DIR.joinpath('qsub_jobs', user_name())
+    log_dir.mkdir(mode=int(0o775), exist_ok=True)
+
+    singularity_cmd = [
+        f'singularity exec',
+        f'{CONTAINER} python {PYTHON_SCRIPT}',
+        f'--in_files {in_files}']
+
+    singularity_cmd = ' '.join(singularity_cmd)
+    job_name = 'tarred_dicom_info_{}'.format(
+        datetime.today().strftime('%Y%m%d%H%M%S'))
+    batch_file = log_dir.joinpath(job_name)
+    variable_list = f'cmd=&quot;{singularity_cmd}&quot;,batch_file=&quot;{batch_file}&quot;'
+
+    cmd = [
+        f'qsub -M {email}',
+        f'-m abe',
+        f'-j oe',
+        f'-q medmem',
+        f'-N {job_name}',
+        f'-o {log_dir}',
+        f'-V',
+        f'-v {variable_list}',
+        f'-l nodes=1:ppn=1,walltime={walltime},mem={mem}gb',
+        f'{QSUB_SCRIPT}'
+    ]
+
+    if not args.testing:
+        results = subprocess.run(split(' '.join(cmd)), capture_output=True)
+        print(results.stdout.decode().strip())
+    else:
+        print('Here is your qsub command:')
+        print(make_readable_command(cmd))
+
+if __name__ == '__main__':
+    main()        
+
+
+
+
+</code></pre>
+              
+            </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+      
+    </span>
+</div>
+    <script>var base_url = '../..';</script>
+    <script src="../../js/theme.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>

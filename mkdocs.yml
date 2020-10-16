@@ -1,0 +1,24 @@
+site_name: Processing Pipeline
+nav:
+    - Home: index.md
+    - Overview: overview.md
+    - Scripts: scripts_temp.md
+
+markdown_extensions:
+    - abbr
+    - admonition
+    - toc:
+        permalink: True
+    - footnotes
+    - attr_list
+    - pymdownx.arithmatex:
+        generic: true
+
+
+    
+plugins:
+    - macros
+
+theme:
+    name: readthedocs
+

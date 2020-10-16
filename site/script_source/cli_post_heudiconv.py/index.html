@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>Cli post heudiconv.py - Processing Pipeline</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../../css/theme.css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Cli post heudiconv.py";
+    var mkdocs_page_input_path = "script_source/cli_post_heudiconv.py.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href="../.." class="icon icon-home"> Processing Pipeline</a>
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../overview/">Overview</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../scripts_temp/">Scripts</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../..">Processing Pipeline</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Cli post heudiconv.py</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <pre><code class="python">import os
+import re
+import json
+
+import pandas as pd
+import nibabel as nib
+
+from pathlib import Path
+from bids import BIDSLayout
+from argparse import ArgumentParser
+
+ADDED_METADATA = {
+    'task_name': {'Description': 'task name for func files'},
+    'run_num': {'Description': 'the run number'},
+    'include_deconvolve': {'Description': 'include the func file in 3dDeconvolve'},
+    'volumes': {'Description': 'number of volumes in mri'},
+}
+
+
+def get_parser():
+    &quot;&quot;&quot;Define parser object&quot;&quot;&quot;
+    parser = ArgumentParser(description='Adjusts scans.tsv after heudiconv completeion')
+
+    # REQUIRED
+    parser.add_argument('bids_dir', action='store', help='the bids directory')
+
+    # OPTIONAL
+    parser.add_argument('--participants', action='store', nargs='+', required=True,
+                        help='''participants to correct. All sessions are 
+                                corrected. If not specified, all participants
+                                in bids_dir will be corrected''')
+
+    return parser
+
+def main():
+    parser = get_parser()
+    args = parser.parse_args()
+
+    layout = BIDSLayout(Path(args.bids_dir).resolve())
+
+    all_participants = layout.get_subjects()
+    participants = args.participants
+
+    invalid_participants = set(participants).difference(all_participants)
+    if invalid_participants:
+        raise Exception(f'Invalide participants: {invalid_participants}')
+
+    for participant in participants:
+
+        # scans.tsv can be located at these levels:
+        #   subject
+        #   session
+
+        scans = layout.get(suffix='scans', 
+                           extension='tsv', 
+                           subject=participant)
+
+        for scan in scans:    
+
+            scan_path = Path(scan.path)
+            json_path = scan_path.parent / (scan_path.stem + '.json')
+            df = scan.get_df()
+
+            # equivalent fields in json meta data
+            # task_name = TaskName
+            # run_num = NA
+            # include_deconvolve = NA
+            # volumes = NumberOfTemporalPositions or dcmmeta_shape
+
+            df['task_name'] = df['filename'].str.extract(r'task-([a-zA-Z0-9]+)', expand=False)
+            df['run_num'] = df['filename'].str.extract(r'run-(\d+)', expand=False)
+            df['include_deconvolve'] = pd.notnull(df['task_name'])
+
+            filenames = [scan_path.parent / x for x in df['filename']]
+            df['volumes'] = [nib.load(x).header['dim'][4] for x in filenames]
+
+            df.to_csv(scan_path, sep='\t', na_rep='n/a', index=False)
+
+            try:
+                with open(json_path, 'r') as f:
+                    json_data = json.load(f)
+            except FileNotFoundError:
+                json_data = {}
+
+            json_data.update(ADDED_METADATA)
+            with open(json_path, 'w') as f:
+                json.dump(json_data, f, indent=2)
+
+            print(f'Updated {scan.filename}')
+
+        print(f'Finished participant {participant}')
+
+if __name__ == '__main__':
+    main()
+
+
+</code></pre>
+              
+            </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+      
+    </span>
+</div>
+    <script>var base_url = '../..';</script>
+    <script src="../../js/theme.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>
