@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Thu Sep 24 14:49:14 2020
-hello 
+
 This is just to autogenerate documentation for Joe's scripts
 
 Notes:
