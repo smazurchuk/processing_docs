@@ -1,2 +1,2 @@
-pymdown-extensions==8.0
-mkdocs-macros-plugin==0.4
+pymdown-extensions
+mkdocs-macros-plugin
