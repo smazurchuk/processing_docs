@@ -8,4 +8,6 @@ https://squidfunk.github.io/mkdocs-material/reference/abbreviations/
 
 The site can be tested locally using `mkdocs serve` and it is deployed using `mkdocs gh-deploy`
 
+As a reminder, this repo is hosted under `main` (and not `master`)
+
 
