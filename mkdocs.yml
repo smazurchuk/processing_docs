@@ -3,6 +3,7 @@ nav:
     - Home: index.md
     - Overview: overview.md
     - Scripts: scripts_temp.md
+    - Raw Data Storage: raw_data_storage.md
 
 markdown_extensions:
     - abbr
