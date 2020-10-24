@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Raw data storage model - Processing Pipeline</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../css/theme.css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Raw data storage model";
+    var mkdocs_page_input_path = "raw_data_storage.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> Processing Pipeline</a>
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../overview/">Overview</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../scripts_temp/">Scripts</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">Processing Pipeline</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Raw data storage model</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="raw-data-storage-model">Raw data storage model<a class="headerlink" href="#raw-data-storage-model" title="Permanent link">&para;</a></h1>
+<p>We need a lab standard for storing raw dicom and nifti files, because it unifies lab imaging analysis procedures. Finding raw files and working with raw data across studies will be easier. The methods section for fMRI preprocessing in published papers will be a copy/paste plus some minor editing. The standard should minimize hard drive usage, because storage costs money. Lab standards just make sense.</p>
+<h2 id="directory-structure-overview">Directory structure overview<a class="headerlink" href="#directory-structure-overview" title="Permanent link">&para;</a></h2>
+<p>Below is an example directory tree for an experiment/study/project named <code>example</code>. The top level directory is the experiment name. It has 3 subject data sets: <code>001</code> with 2 sessions, <code>002</code> with 1 session, and <code>003</code> with 1 session. Each session has the following scans: <code>T1w</code>, <code>T2w</code>, <code>dwi</code>, <code>1 pair of spin echo images</code>, <code>2 rest</code>, and <code>1 storymath</code>.</p>
+<pre><code class="language-pre">experiment
+|-- bids
+|   |-- sub-001
+|   |   |-- ses-1
+|   |   |   |-- anat
+|   |   |   |-- dwi
+|   |   |   |-- fmap
+|   |   |   `-- func
+|   |   `-- ses-2
+|   |       |-- anat
+|   |       |-- dwi
+|   |       |-- fmap
+|   |       `-- func
+|   |-- sub-002
+|   |   `-- ses-1
+|   |       |-- anat
+|   |       |-- dwi
+|   |       |-- fmap
+|   |       `-- func
+|   `-- sub-003
+|       `-- ses-1
+|           |-- anat
+|           |-- dwi
+|           |-- fmap
+|           `-- func
+|-- hcp
+|   |-- 001
+|   |   |-- DWI_dir97_RL_01
+|   |   |-- DWI_dir97_RL_02
+|   |   |-- rfMRI_REST1_RL_01
+|   |   |-- rfMRI_REST1_RL_02
+|   |   |-- rfMRI_REST2_RL_01
+|   |   |-- rfMRI_REST2_RL_02
+|   |   |-- SpinEchoFieldMap_LR_01
+|   |   |-- SpinEchoFieldMap_LR_02
+|   |   |-- SpinEchoFieldMap_RL_01
+|   |   |-- SpinEchoFieldMap_RL_02
+|   |   |-- T1w_MPR1_01
+|   |   |-- T1w_MPR1_02
+|   |   |-- T2w_CUBE1_01
+|   |   |-- T2w_CUBE1_02
+|   |   |-- tfMRI_STORYMATH_RL_01
+|   |   `-- tfMRI_STORYMATH_RL_02
+|   |-- 002
+|   |   |-- DWI_dir97_RL_01
+|   |   |-- rfMRI_REST1_RL_01
+|   |   |-- rfMRI_REST2_RL_01
+|   |   |-- SpinEchoFieldMap_LR_01
+|   |   |-- SpinEchoFieldMap_RL_01
+|   |   |-- T1w_MPR1_01
+|   |   |-- T2w_CUBE1_01
+|   |   `-- tfMRI_STORYMATH_RL_01
+|   `-- 003
+|       |-- DWI_dir97_RL_01
+|       |-- rfMRI_REST1_RL_01
+|       |-- rfMRI_REST2_RL_01
+|       |-- SpinEchoFieldMap_LR_01
+|       |-- SpinEchoFieldMap_RL_01
+|       |-- T1w_MPR1_01
+|       |-- T2w_CUBE1_01
+|       `-- tfMRI_STORYMATH_RL_01
+`-- sourcedata
+    |-- sub-001
+    |   |-- ses-1
+    |   |   `-- 001s01.tar.gz
+    |   `-- ses-2
+    |       `-- 001s02.tar.gz
+    |-- sub-002
+    |   `-- ses-1
+    |       `-- 002s01.tar.gz
+    `-- sub-003
+        `-- ses-1
+            `-- 003s01.tar.gz
+</code></pre>
+<p><code>sourcedata</code> stores the dicom files for all subjects in <code>tar.gz</code> format. <code>bids</code> stores the images in nifti format according to the <a href="https://bids-specification.readthedocs.io/en/stable/">bids specification</a>. <code>hcp</code> stores the images in nifti format that is compatible with the HCP minimal-preprocessing pipeline. All experiments should have the <code>sourcedata</code> and <code>bids</code> directories. <code>hcp</code> is optional and is likely unneeded. If the <code>hcp</code> directory is needed, create the nifti files by hard linking to the nifti files in <code>bids</code> directory so we save hard drive space. Many powerful tools are built requiring data in bids format, and we want to be able to use these tools.</p>
+<h2 id="sourcedata">sourcedata<a class="headerlink" href="#sourcedata" title="Permanent link">&para;</a></h2>
+<p><code>sourcedata</code> stores the dicom files for all subjects in <code>tar.gz</code> format. There are 2 MRI scanners: the 3T pavilion scanner (located in the Froedtert pavilion) and the premier 3T scanner (located in the CIR). Research scans are nearly always uploaded to the <a href="https://gwxnat.rcc.mcw.edu/app/template/Login.vm">research XNAT server</a>. In the rare case of using clinical imagining data, the files are uploaded to the <a href="https://xnat.mcw.edu/xnat/app/template/Login.vm#!">clinical XNAT server</a>. Both permit downloading full sessions as <code>tar.gz</code> files, so do this according to the above tree format. Dicoms should be saved and stored in <code>tar.gz</code> format because it reduces the number of files from very many (there is a dicom file for each slice in a MRI scan) and it compresses the storage used by 5-6 times.</p>
+<p>If dicoms are saved as <code>tar.gz</code> files, how can we identify the scans for the dicom files? The XNAT servers identify each scan under the details for an MR session. A better alternative is the python script <code>commands/cli_tarred_dicom_info.py</code>. This script pulls information from the dicom files in the <code>tar.gz</code> file and saves it into a tsv file. Here are the tsv file columns and their meanings:</p>
+<ol>
+<li><strong>Path</strong><ul>
+<li>the path to the dicom folder.</li>
+</ul>
+</li>
+<li><strong>TotalFiles</strong><ul>
+<li>number of dicom files in dicom folder.</li>
+</ul>
+</li>
+<li><strong>AcquisitionDate</strong><ul>
+<li>the dicom acquisistion date.</li>
+</ul>
+</li>
+<li><strong>Modality</strong><ul>
+<li>image modality.</li>
+</ul>
+</li>
+<li><strong>StudyDescription</strong><ul>
+<li>the study description</li>
+</ul>
+</li>
+<li><strong>SeriesDescription</strong><ul>
+<li>the series description. This field is useful for identifying the dicom scans.</li>
+</ul>
+</li>
+<li><strong>SeriesNumber</strong><ul>
+<li>the series number. This number is must be unique for a session, which is the <code>tar.gz</code> file.</li>
+</ul>
+</li>
+<li><strong>PatientID</strong><ul>
+<li>the patient ID. This field is usefuld for identifying dicom scans.</li>
+</ul>
+</li>
+<li><strong>MagneticFieldStrength</strong><ul>
+<li>the magngetic field strength (typically 3).</li>
+</ul>
+</li>
+<li><strong>ReceiveCoilName</strong><ul>
+<li>the receive coil name (typically 32Ch Head).</li>
+</ul>
+</li>
+</ol>
+<h2 id="dicom-to-bids">dicom to bids<a class="headerlink" href="#dicom-to-bids" title="Permanent link">&para;</a></h2>
+<p>There are multpile strategies to convert dicom files into bids format. Here are some online resources for dicom to bids conversion: <a href="https://andysbrainbook.readthedocs.io/en/latest/OpenScience/OS/BIDS_Overview.html">Andy's Brain Book: BIDS Overview</a> and <a href="http://reproducibility.stanford.edu/bids-tutorial-series-part-1a/">The Stanford Center for REproducible Neuroscience</a>.</p>
+<p>For my dicom-to-bids conversion, I use <a href="https://github.com/nipy/heudiconv">heudiconv</a>. Heudiconv requires creating a <code>heuristic.py</code> file which is a python file coding how to convert and organize the data. Below is a snippet of the <code>heuristic.py</code> file I created for the SOE data:</p>
+<pre><code class="language-python"># * * * LEADING COMMENTS * * *
+
+# default values
+# : (t1w, {&quot;acq&quot;: &quot;mprage&quot;}, &quot;MPRAGE BW=31.2kHz&quot;),
+# : (unprocessed_t1w, {&quot;acq&quot;: &quot;mprage&quot;}, &quot;ORIG MPRAGE BW=31.2kHz&quot;),
+# : (processed_t1w, {&quot;acq&quot;: &quot;mprage&quot;}, &quot;Filtered MPRAGE BW=31.2kHz&quot;),
+# : (t2w, {&quot;acq&quot;: &quot;cube&quot;}, &quot;Cube T2&quot;),
+# : (processed_t2w, {&quot;acq&quot;: &quot;filtered&quot;}, &quot;Filtered Cube T2&quot;),
+# : (fmap, {&quot;dir&quot;: &quot;AP&quot;}, &quot;SE Map 1 AP&quot;),
+# : (fmap, {&quot;dir&quot;: &quot;PA&quot;}, &quot;SE Map 1 PA&quot;),
+# : (fmap, {&quot;dir&quot;: &quot;AP&quot;}, &quot;SE Map 2 AP&quot;),
+# : (fmap, {&quot;dir&quot;: &quot;PA&quot;}, &quot;SE Map 2 PA&quot;),
+# : (fmap, {&quot;dir&quot;: &quot;AP&quot;}, &quot;SE Map 3 AP&quot;),
+# : (fmap, {&quot;dir&quot;: &quot;PA&quot;}, &quot;SE Map 3 PA&quot;),
+# : (soe, {&quot;run&quot;: 1, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run1&quot;),
+# : (soe, {&quot;run&quot;: 2, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run2&quot;),
+# : (soe, {&quot;run&quot;: 3, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run3&quot;),
+# : (soe, {&quot;run&quot;: 4, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run4&quot;),
+# : (soe, {&quot;run&quot;: 5, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run5&quot;),
+# : (soe, {&quot;run&quot;: 6, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run6&quot;),
+# : (soe, {&quot;run&quot;: 7, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run7&quot;),
+# : (soe, {&quot;run&quot;: 8, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run8&quot;),},
+
+# ses-2's
+# : (t1w, {&quot;acq&quot;: &quot;mprage&quot;}, &quot;MPRAGE BW=31.2kHz&quot;),
+# : (unprocessed_t1w, {&quot;acq&quot;: &quot;mprage&quot;}, &quot;ORIG MPRAGE BW=31.2kHz&quot;),
+# : (processed_t1w, {&quot;acq&quot;: &quot;mprage&quot;}, &quot;Filtered MPRAGE BW=31.2kHz&quot;),
+# : (t2w, {&quot;acq&quot;: &quot;cube&quot;}, &quot;Cube T2&quot;),
+# : (processed_t2w, {&quot;acq&quot;: &quot;filtered&quot;}, &quot;Filtered Cube T2&quot;),
+# : (fmap, {&quot;dir&quot;: &quot;AP&quot;}, &quot;SE Map 1 AP&quot;),
+# : (fmap, {&quot;dir&quot;: &quot;PA&quot;}, &quot;SE Map 1 PA&quot;),
+# : (fmap, {&quot;dir&quot;: &quot;AP&quot;}, &quot;SE Map 2 AP&quot;),
+# : (fmap, {&quot;dir&quot;: &quot;PA&quot;}, &quot;SE Map 2 PA&quot;),
+# : (fmap, {&quot;dir&quot;: &quot;AP&quot;}, &quot;SE Map 3 AP&quot;),
+# : (fmap, {&quot;dir&quot;: &quot;PA&quot;}, &quot;SE Map 3 PA&quot;),
+# : (soe, {&quot;run&quot;: 9, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run9&quot;),
+# : (soe, {&quot;run&quot;: 10, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run10&quot;),
+# : (soe, {&quot;run&quot;: 11, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run11&quot;),
+# : (soe, {&quot;run&quot;: 12, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run12&quot;),
+# : (soe, {&quot;run&quot;: 13, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run13&quot;),
+# : (soe, {&quot;run&quot;: 14, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run14&quot;),
+# : (soe, {&quot;run&quot;: 15, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run15&quot;),
+# : (soe, {&quot;run&quot;: 16, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run16&quot;),},
+
+# : (t1w, {&quot;acq&quot;: &quot;mprage&quot;}, &quot;MPRAGE BW=31.2kHz&quot;),
+# : (unprocessed_t1w, {&quot;acq&quot;: &quot;mprage&quot;}, &quot;ORIG MPRAGE BW=31.2kHz&quot;),
+# : (processed_t1w, {&quot;acq&quot;: &quot;mprage&quot;}, &quot;Filtered MPRAGE BW=31.2kHz&quot;),
+# : (t2w, {&quot;acq&quot;: &quot;cube&quot;}, &quot;Cube T2&quot;),
+# : (processed_t2w, {&quot;acq&quot;: &quot;filtered&quot;}, &quot;Filtered Cube T2&quot;),
+# : (fmap, {&quot;dir&quot;: &quot;AP&quot;}, &quot;SE Map 1 AP&quot;),
+# : (fmap, {&quot;dir&quot;: &quot;PA&quot;}, &quot;SE Map 1 PA&quot;),
+# : (fmap, {&quot;dir&quot;: &quot;AP&quot;}, &quot;SE Map 2 AP&quot;),
+# : (fmap, {&quot;dir&quot;: &quot;PA&quot;}, &quot;SE Map 2 PA&quot;),
+# : (fmap, {&quot;dir&quot;: &quot;AP&quot;}, &quot;SE Map 3 AP&quot;),
+# : (fmap, {&quot;dir&quot;: &quot;PA&quot;}, &quot;SE Map 3 PA&quot;),
+# : (soe, {&quot;run&quot;: 9, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run1&quot;),
+# : (soe, {&quot;run&quot;: 10, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run2&quot;),
+# : (soe, {&quot;run&quot;: 11, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run3&quot;),
+# : (soe, {&quot;run&quot;: 12, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run4&quot;),
+# : (soe, {&quot;run&quot;: 13, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run5&quot;),
+# : (soe, {&quot;run&quot;: 14, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run6&quot;),
+# : (soe, {&quot;run&quot;: 15, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run7&quot;),
+# : (soe, {&quot;run&quot;: 16, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run8&quot;),},
+
+# ses-3's
+# : (t1w, {&quot;acq&quot;: &quot;mprage&quot;}, &quot;MPRAGE BW=31.2kHz&quot;),
+# : (unprocessed_t1w, {&quot;acq&quot;: &quot;mprage&quot;}, &quot;ORIG MPRAGE BW=31.2kHz&quot;),
+# : (processed_t1w, {&quot;acq&quot;: &quot;mprage&quot;}, &quot;Filtered MPRAGE BW=31.2kHz&quot;),
+# : (t2w, {&quot;acq&quot;: &quot;cube&quot;}, &quot;Cube T2&quot;),
+# : (processed_t2w, {&quot;acq&quot;: &quot;filtered&quot;}, &quot;Filtered Cube T2&quot;),
+# : (fmap, {&quot;dir&quot;: &quot;AP&quot;}, &quot;SE Map 1 AP&quot;),
+# : (fmap, {&quot;dir&quot;: &quot;PA&quot;}, &quot;SE Map 1 PA&quot;),
+# : (fmap, {&quot;dir&quot;: &quot;AP&quot;}, &quot;SE Map 2 AP&quot;),
+# : (fmap, {&quot;dir&quot;: &quot;PA&quot;}, &quot;SE Map 2 PA&quot;),
+# : (fmap, {&quot;dir&quot;: &quot;AP&quot;}, &quot;SE Map 3 AP&quot;),
+# : (fmap, {&quot;dir&quot;: &quot;PA&quot;}, &quot;SE Map 3 PA&quot;),
+# : (soe, {&quot;run&quot;: 17, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run17&quot;),
+# : (soe, {&quot;run&quot;: 18, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run18&quot;),
+# : (soe, {&quot;run&quot;: 19, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run19&quot;),
+# : (soe, {&quot;run&quot;: 20, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run20&quot;),
+# : (soe, {&quot;run&quot;: 21, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run21&quot;),
+# : (soe, {&quot;run&quot;: 22, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run22&quot;),
+# : (soe, {&quot;run&quot;: 23, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run23&quot;),
+# : (soe, {&quot;run&quot;: 24, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run24&quot;),},
+
+# : (t1w, {&quot;acq&quot;: &quot;mprage&quot;}, &quot;MPRAGE BW=31.2kHz&quot;),
+# : (unprocessed_t1w, {&quot;acq&quot;: &quot;mprage&quot;}, &quot;ORIG MPRAGE BW=31.2kHz&quot;),
+# : (processed_t1w, {&quot;acq&quot;: &quot;mprage&quot;}, &quot;Filtered MPRAGE BW=31.2kHz&quot;),
+# : (t2w, {&quot;acq&quot;: &quot;cube&quot;}, &quot;Cube T2&quot;),
+# : (processed_t2w, {&quot;acq&quot;: &quot;filtered&quot;}, &quot;Filtered Cube T2&quot;),
+# : (fmap, {&quot;dir&quot;: &quot;AP&quot;}, &quot;SE Map 1 AP&quot;),
+# : (fmap, {&quot;dir&quot;: &quot;PA&quot;}, &quot;SE Map 1 PA&quot;),
+# : (fmap, {&quot;dir&quot;: &quot;AP&quot;}, &quot;SE Map 2 AP&quot;),
+# : (fmap, {&quot;dir&quot;: &quot;PA&quot;}, &quot;SE Map 2 PA&quot;),
+# : (fmap, {&quot;dir&quot;: &quot;AP&quot;}, &quot;SE Map 3 AP&quot;),
+# : (fmap, {&quot;dir&quot;: &quot;PA&quot;}, &quot;SE Map 3 PA&quot;),
+# : (soe, {&quot;run&quot;: 17, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run1&quot;),
+# : (soe, {&quot;run&quot;: 18, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run2&quot;),
+# : (soe, {&quot;run&quot;: 19, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run3&quot;),
+# : (soe, {&quot;run&quot;: 20, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run4&quot;),
+# : (soe, {&quot;run&quot;: 21, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run5&quot;),
+# : (soe, {&quot;run&quot;: 22, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run6&quot;),
+# : (soe, {&quot;run&quot;: 23, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run7&quot;),
+# : (soe, {&quot;run&quot;: 24, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run8&quot;),},
+
+# * * * KEY CREATION * * *
+
+def create_key(template, outtype=(&quot;nii.gz&quot;,), annotation_classes=None):
+    if template is None or not template:
+        raise ValueError(&quot;Template must be a valid formatg string&quot;)
+    return template, outtype, annotation_classes
+
+### keyword info ###
+# &quot;item&quot; must always be specified if we are using custom keywords; even if it is not used
+# session = &quot;ses-{}&quot; (ses is already prefixed and not needed)
+# bids_subject_session_prefix = 'sub-%s' % subject + (('_ses-%s' % ses) if ses else '')
+# bids_subject_session_dir = 'sub-%s' % subject + (('/ses-%s' % ses) if ses else '')
+# order matters with descriptors in task names (acq, run, etc.) 
+# I recommend removing .heudiconv in subject folders, because it can cause errors if heudiconv is run again on the same dicom set
+
+
+def infotodict(seqinfo):
+    t1w = create_key(&quot;{bids_subject_session_dir}/anat/{bids_subject_session_prefix}_acq-{acq}_T1w&quot;)
+    t2w = create_key(&quot;{bids_subject_session_dir}/anat/{bids_subject_session_prefix}_acq-{acq}_T2w&quot;)
+    processed_t1w = create_key(&quot;{bids_subject_session_dir}/processed_anat/{bids_subject_session_prefix}_acq-{acq}_T1w&quot;)
+    processed_t2w = create_key(&quot;{bids_subject_session_dir}/processed_anat/{bids_subject_session_prefix}_acq-{acq}_T2w&quot;)
+    unprocessed_t1w = create_key(&quot;{bids_subject_session_dir}/unprocessed_anat/{bids_subject_session_prefix}_acq-{acq}_T1w&quot;)
+    unprocessed_t2w = create_key(&quot;{bids_subject_session_dir}/unprocessed_anat/{bids_subject_session_prefix}_acq-{acq}_T2w&quot;)
+
+    soe = create_key(&quot;{bids_subject_session_dir}/func/{bids_subject_session_prefix}_task-soe_dir-{dir}_run-{run}_bold&quot;)
+
+    fmap = create_key(&quot;{bids_subject_session_dir}/fmap/{bids_subject_session_prefix}_dir-{dir}_run-{item}_epi&quot;)
+
+    info = {t1w: [], t2w: [],
+            processed_t1w: [], processed_t2w: [],
+            unprocessed_t1w: [], unprocessed_t2w: [],
+            soe: [],
+            fmap: [],}
+
+# * * * DICT CREATION * * *
+
+    pm = {
+        # ses-1
+        ('SOE_101_1_032919', '20190329'): {
+            3 : (t1w, {&quot;acq&quot;: &quot;mprage&quot;}, &quot;MPRAGE BW=31.2kHz&quot;),
+            40003 : (unprocessed_t1w, {&quot;acq&quot;: &quot;mprage&quot;}, &quot;ORIG MPRAGE BW=31.2kHz&quot;),
+            4 : (t2w, {&quot;acq&quot;: &quot;cube&quot;}, &quot;Cube T2&quot;),
+            1004 : (processed_t2w, {&quot;acq&quot;: &quot;filtered&quot;}, &quot;Filtered Cube T2&quot;),
+            5 : (fmap, {&quot;dir&quot;: &quot;AP&quot;}, &quot;SE Map 1 AP&quot;),
+            6 : (fmap, {&quot;dir&quot;: &quot;PA&quot;}, &quot;SE Map 1 PA&quot;),
+            11 : (fmap, {&quot;dir&quot;: &quot;AP&quot;}, &quot;SE Map 2 AP&quot;),
+            12 : (fmap, {&quot;dir&quot;: &quot;PA&quot;}, &quot;SE Map 2 PA&quot;),
+            17 : (fmap, {&quot;dir&quot;: &quot;AP&quot;}, &quot;SE Map 3 AP&quot;),
+            18 : (fmap, {&quot;dir&quot;: &quot;PA&quot;}, &quot;SE Map 3 PA&quot;),
+            7 : (soe, {&quot;run&quot;: 1, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run1&quot;),
+            8 : (soe, {&quot;run&quot;: 2, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run2&quot;),
+            9 : (soe, {&quot;run&quot;: 3, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run3&quot;),
+            10 : (soe, {&quot;run&quot;: 4, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run4&quot;),
+            13 : (soe, {&quot;run&quot;: 5, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run5&quot;),
+            14 : (soe, {&quot;run&quot;: 6, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run6&quot;),
+            15 : (soe, {&quot;run&quot;: 7, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run7&quot;),
+            16 : (soe, {&quot;run&quot;: 8, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run8&quot;),},
+        # ses-2
+        ('SOE_101_2_051619', '20190516'): { # soe101  2      
+            2 : (t1w, {&quot;acq&quot;: &quot;mprage&quot;}, &quot;MPRAGE BW=31.2kHz&quot;),
+            40002 : (unprocessed_t1w, {&quot;acq&quot;: &quot;mprage&quot;}, &quot;ORIG MPRAGE BW=31.2kHz&quot;),
+            1002 : (processed_t1w, {&quot;acq&quot;: &quot;mprage&quot;}, &quot;Filtered MPRAGE BW=31.2kHz&quot;),
+            3 : (t2w, {&quot;acq&quot;: &quot;cube&quot;}, &quot;Cube T2&quot;),
+            1003 : (processed_t2w, {&quot;acq&quot;: &quot;filtered&quot;}, &quot;Filtered Cube T2&quot;),
+            4 : (fmap, {&quot;dir&quot;: &quot;AP&quot;}, &quot;SE Map 1 AP&quot;),
+            5 : (fmap, {&quot;dir&quot;: &quot;PA&quot;}, &quot;SE Map 1 PA&quot;),
+            10 : (fmap, {&quot;dir&quot;: &quot;AP&quot;}, &quot;SE Map 2 AP&quot;),
+            11 : (fmap, {&quot;dir&quot;: &quot;PA&quot;}, &quot;SE Map 2 PA&quot;),
+            16 : (fmap, {&quot;dir&quot;: &quot;AP&quot;}, &quot;SE Map 3 AP&quot;),
+            17 : (fmap, {&quot;dir&quot;: &quot;PA&quot;}, &quot;SE Map 3 PA&quot;),
+            6 : (soe, {&quot;run&quot;: 9, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run9&quot;),
+            7 : (soe, {&quot;run&quot;: 10, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run10&quot;),
+            8 : (soe, {&quot;run&quot;: 11, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run11&quot;),
+            9 : (soe, {&quot;run&quot;: 12, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run12&quot;),
+            12 : (soe, {&quot;run&quot;: 13, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run13&quot;),
+            13 : (soe, {&quot;run&quot;: 14, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run14&quot;),
+            14 : (soe, {&quot;run&quot;: 15, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run15&quot;),
+            15: (soe, {&quot;run&quot;: 16, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run16&quot;),},
+        #ses-3
+        ('SOE_101_3_061119', '20190611'): { # soe101  3      
+            2 : (t1w, {&quot;acq&quot;: &quot;mprage&quot;}, &quot;MPRAGE BW=31.2kHz&quot;),
+            40002 : (unprocessed_t1w, {&quot;acq&quot;: &quot;mprage&quot;}, &quot;ORIG MPRAGE BW=31.2kHz&quot;),
+            1002 : (processed_t1w, {&quot;acq&quot;: &quot;mprage&quot;}, &quot;Filtered MPRAGE BW=31.2kHz&quot;),
+            3 : (t2w, {&quot;acq&quot;: &quot;cube&quot;}, &quot;Cube T2&quot;),
+            1003 : (processed_t2w, {&quot;acq&quot;: &quot;filtered&quot;}, &quot;Filtered Cube T2&quot;),
+            4 : (fmap, {&quot;dir&quot;: &quot;AP&quot;}, &quot;SE Map 1 AP&quot;),
+            5 : (fmap, {&quot;dir&quot;: &quot;PA&quot;}, &quot;SE Map 1 PA&quot;),
+            10 : (fmap, {&quot;dir&quot;: &quot;AP&quot;}, &quot;SE Map 2 AP&quot;),
+            11 : (fmap, {&quot;dir&quot;: &quot;PA&quot;}, &quot;SE Map 2 PA&quot;),
+            16 : (fmap, {&quot;dir&quot;: &quot;AP&quot;}, &quot;SE Map 3 AP&quot;),
+            17 : (fmap, {&quot;dir&quot;: &quot;PA&quot;}, &quot;SE Map 3 PA&quot;),
+            6 : (soe, {&quot;run&quot;: 17, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run1&quot;),
+            7 : (soe, {&quot;run&quot;: 18, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run2&quot;),
+            8 : (soe, {&quot;run&quot;: 19, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run3&quot;),
+            9 : (soe, {&quot;run&quot;: 20, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run4&quot;),
+            12 : (soe, {&quot;run&quot;: 21, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run5&quot;),
+            13 : (soe, {&quot;run&quot;: 22, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run6&quot;),
+            14 : (soe, {&quot;run&quot;: 23, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run7&quot;),
+            15 : (soe, {&quot;run&quot;: 24, &quot;dir&quot;: &quot;AP&quot;}, &quot;MB4-EPI AP run8&quot;),},
+    }
+
+# * * * FOR LOOP * * *
+
+    for s in seqinfo:
+        series_num = int(s.series_id.split('-')[0])
+        sm = pm[(s.patient_id, s.date)]
+
+        if series_num in sm:
+            sm[series_num][1][&quot;item&quot;] = s.series_id
+            info[sm[series_num][0]].append(sm[series_num][1])
+
+    return info
+</code></pre>
+<p>The strategy behind my <code>heuristic.py</code> file is to explicitly declare all dicom scans and how to name them according to the bids specification for a single experiment. I prefer this strategy, becuase it can handle all edge cases and it fully documents the dicom to nifti file conversions.</p>
+<p>My <code>heursitic.py</code> file contains 4 sections labeled within the snippet: leading comments, key creation, dict creation, and for loop. Leading comments are comments containing common values for dict creation. In the above example heuristic file, the comments contain comman scans for a single participant in the SOE experiment for all 3 sessions. When a new session for a participant has been completed, the session scans are copied from the comments, pasted into the dict creation section, and the missing values are filled. Key creations creates keys for the info dict. The keys are templates file names for the type of scan and are used as dict keys for info. Dict creation section will likely be the only section edited when a new session is acquired for a participant. The dict <code>pm</code> specifies scans for each participant session. In the above example, the keys in pm uniquely identify a participant scanning session. The keys are a 2-tuple with the dicom <code>PatientID</code> as first value and <code>AcquisitionDate</code> as secon value. The value for the 2-tuple is a dict specifying each dicom scan. The keys are the dicom <code>SeriesNumber</code>s. The values are a 3-tuple: (info key, entities and their values for the scan, the dicom <code>SeriesDescription</code>). The series description is used only for documentation purporses. The last section is the for loop. It cycles through the scans for a patient session and appends them to the lists in info. Heudiconv converts the dicoms to nifti files and names them according to the information contained in the info dict.</p>
+<p>If you do not like how I write my <code>heuristic.py</code> file, this <a href="http://reproducibility.stanford.edu/bids-tutorial-series-part-2a/">tutorial</a> offers a different strategy. Other strategies can be found through a search engine.</p>
+<h1 id="bids-to-hcp">bids to hcp<a class="headerlink" href="#bids-to-hcp" title="Permanent link">&para;</a></h1>
+<p>If you need to use the HCP pipeline, write a script converting the bids folder to the hcp directory structure. When creating the HCP files, hard link (<code>ln</code>) to the bids files. Hard linknig saves hard drive space.</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>
