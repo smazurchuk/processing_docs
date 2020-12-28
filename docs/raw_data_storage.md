@@ -343,6 +343,6 @@ My `heursitic.py` file contains 4 sections labeled within the snippet: leading c
 
 If you do not like how I write my `heuristic.py` file, this [tutorial](http://reproducibility.stanford.edu/bids-tutorial-series-part-2a/) offers a different strategy. Other strategies can be found through a search engine.
 
-# bids to hcp
+## bids to hcp
 
 If you need to use the HCP pipeline, write a script converting the bids folder to the hcp directory structure. When creating the HCP files, hard link (`ln`) to the bids files. Hard linknig saves hard drive space.
