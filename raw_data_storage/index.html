@@ -64,7 +64,13 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#dicom-to-bids">dicom to bids</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#bids-to-hcp">bids to hcp</a>
+    </li>
     </ul>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../torque_tips/">Torque Tips</a>
                     </li>
                 </ul>
       </div>
@@ -447,7 +453,7 @@ def infotodict(seqinfo):
 <p>The strategy behind my <code>heuristic.py</code> file is to explicitly declare all dicom scans and how to name them according to the bids specification for a single experiment. I prefer this strategy, becuase it can handle all edge cases and it fully documents the dicom to nifti file conversions.</p>
 <p>My <code>heursitic.py</code> file contains 4 sections labeled within the snippet: leading comments, key creation, dict creation, and for loop. Leading comments are comments containing common values for dict creation. In the above example heuristic file, the comments contain comman scans for a single participant in the SOE experiment for all 3 sessions. When a new session for a participant has been completed, the session scans are copied from the comments, pasted into the dict creation section, and the missing values are filled. Key creations creates keys for the info dict. The keys are templates file names for the type of scan and are used as dict keys for info. Dict creation section will likely be the only section edited when a new session is acquired for a participant. The dict <code>pm</code> specifies scans for each participant session. In the above example, the keys in pm uniquely identify a participant scanning session. The keys are a 2-tuple with the dicom <code>PatientID</code> as first value and <code>AcquisitionDate</code> as secon value. The value for the 2-tuple is a dict specifying each dicom scan. The keys are the dicom <code>SeriesNumber</code>s. The values are a 3-tuple: (info key, entities and their values for the scan, the dicom <code>SeriesDescription</code>). The series description is used only for documentation purporses. The last section is the for loop. It cycles through the scans for a patient session and appends them to the lists in info. Heudiconv converts the dicoms to nifti files and names them according to the information contained in the info dict.</p>
 <p>If you do not like how I write my <code>heuristic.py</code> file, this <a href="http://reproducibility.stanford.edu/bids-tutorial-series-part-2a/">tutorial</a> offers a different strategy. Other strategies can be found through a search engine.</p>
-<h1 id="bids-to-hcp">bids to hcp<a class="headerlink" href="#bids-to-hcp" title="Permanent link">&para;</a></h1>
+<h2 id="bids-to-hcp">bids to hcp<a class="headerlink" href="#bids-to-hcp" title="Permanent link">&para;</a></h2>
 <p>If you need to use the HCP pipeline, write a script converting the bids folder to the hcp directory structure. When creating the HCP files, hard link (<code>ln</code>) to the bids files. Hard linknig saves hard drive space.</p>
               
             </div>
@@ -455,6 +461,8 @@ def infotodict(seqinfo):
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../torque_tips/" class="btn btn-neutral float-right" title="Torque Tips">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
         <a href="../scripts_temp/" class="btn btn-neutral" title="Scripts"><span class="icon icon-circle-arrow-left"></span> Previous</a>
@@ -485,6 +493,8 @@ def infotodict(seqinfo):
       
         <span><a href="../scripts_temp/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
+      
+        <span style="margin-left: 15px"><a href="../torque_tips/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>
