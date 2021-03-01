@@ -66,15 +66,15 @@
                     </li>
                 </ul>
                 <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../scripts_temp/">Scripts</a>
-                    </li>
-                </ul>
-                <ul>
                     <li class="toctree-l1"><a class="reference internal" href="../raw_data_storage/">Raw Data Storage</a>
                     </li>
                 </ul>
                 <ul>
                     <li class="toctree-l1"><a class="reference internal" href="../torque_tips/">Torque Tips</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../scripts_temp/">Source Scripts</a>
                     </li>
                 </ul>
       </div>
@@ -152,14 +152,15 @@
 <h3 id="understanding-the-output">Understanding the Output<a class="headerlink" href="#understanding-the-output" title="Permanent link">&para;</a></h3>
 <h2 id="soe-afni">SOE AFNI<a class="headerlink" href="#soe-afni" title="Permanent link">&para;</a></h2>
 <p>This analysis is specific to the processing of the SOE data. It begins with the script <code>soe_dimon.py</code> written by Leo.</p>
-<pre><code class="language-shell">Written for Python 2.7 and AFNI 18.0 or higher
+<pre><code class="shell">Written for Python 2.7 and AFNI 18.0 or higher
 Usage: python soe_dimon.py [subjID] [session]
 ex.: python soe_dimon.py 103 1
  Leo Fernandino
 05/07/19
 </code></pre>
+
 <p>Following this, there is a script by that copies the files after which the following proc.py command is used to pre-process the data[^1]</p>
-<pre><code class="language-bash">afni_proc.py -subj_id SOE_${subj}_${sesh}_SEmap${SEn}                   \
+<pre><code class="bash">afni_proc.py -subj_id SOE_${subj}_${sesh}_SEmap${SEn}                   \
         -dsets $dsets                                                   \
         -copy_anat SOE_${subj}_T1w_acpc_dc_restore_brain_1mm+orig       \
         -blip_forward_dset SOE${subj}_SEmap${SEn}_AP.nii.gz             \
@@ -173,10 +174,11 @@ ex.: python soe_dimon.py 103 1
         -align_opts_aea -giant_move -resample off                       \
         -align_epi_strip_method 3dSkullStrip
 </code></pre>
+
 <p>Following this, the findal outputs have a name like <code>blip</code>. These can then be copied into a directory. The next step is to create the 3d deconvolve file. This is done by creating the necessary 1d files. Proc py produces the nuissance regressors. The ones we are interested in are 3d</p>
 <p>This analysis stream assumes that we start from nifti files organized like the RCC. Further, we will use a script that does not use MNI space</p>
 <h4 id="procpy-options">Proc.py Options<a class="headerlink" href="#procpy-options" title="Permanent link">&para;</a></h4>
-<pre><code class="language-shell">subj_id: file prefix
+<pre><code class="shell">subj_id: file prefix
 dsets: functional run files
 copy_anat: makes copy of anat file
 blip_forward_dset: AP SEmap
@@ -202,7 +204,7 @@ align_epi_strip_method: default is 3dAutomask, set to 3dSkullstrip
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../scripts_temp/" class="btn btn-neutral float-right" title="Scripts">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../raw_data_storage/" class="btn btn-neutral float-right" title="Raw Data Storage">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
         <a href=".." class="btn btn-neutral" title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
@@ -234,7 +236,7 @@ align_epi_strip_method: default is 3dAutomask, set to 3dSkullstrip
         <span><a href=".." style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../scripts_temp/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../raw_data_storage/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>

@@ -52,10 +52,6 @@
                     </li>
                 </ul>
                 <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../scripts_temp/">Scripts</a>
-                    </li>
-                </ul>
-                <ul>
                     <li class="toctree-l1"><a class="reference internal" href="../raw_data_storage/">Raw Data Storage</a>
                     </li>
                 </ul>
@@ -69,6 +65,10 @@
     <li class="toctree-l2"><a class="reference internal" href="#other-tips">Other tips</a>
     </li>
     </ul>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../scripts_temp/">Source Scripts</a>
                     </li>
                 </ul>
       </div>
@@ -108,7 +108,7 @@
 <p>My solution so far has been to embrace python to submit jobs to the cluster. Python has several useful built-in features for writing command line progams. The <code>argparse</code> package is great, because it simultaneously generates command line options and help.</p>
 <h2 id="directory-structure">Directory structure<a class="headerlink" href="#directory-structure" title="Permanent link">&para;</a></h2>
 <p>Organize files and use the same organization scheme across experiments. Here is my proposed directory strucutre:</p>
-<pre><code class="language-pre">experiment_name
+<pre><code class="pre">experiment_name
 |-- bids
 |-- derivatives
 |   `-- fmriprep-v20.1.0
@@ -131,6 +131,7 @@
 |-- templateflow
 `-- tmp
 </code></pre>
+
 <ul>
 <li><strong>experiment_name</strong> is the top level directory and should describe the experiment.</li>
 <li><strong>bids</strong> is a bids compliant folder containing the raw data in nifti format.</li>
@@ -153,7 +154,7 @@
 * **pipeline1.py** - This file writes out the pipeline bash script and submits it to the HPC. I number the pipelines in the order they should be run.
 </code></pre>
 <p>I am going to use the SOE experiment as an example. Here is its current <strong>constants.py</strong>:</p>
-<pre><code class="language-python">from pathlib import Path
+<pre><code class="python">from pathlib import Path
 
 SCRIPT_FILE = Path(__file__).resolve()
 SCRIPT_DIR = SCRIPT_FILE.parent
@@ -203,6 +204,7 @@ PREAMBLE = [
     'set -e',
 ]
 </code></pre>
+
 <p>For the pipelines I created, pipeline1 converts the dicom files to nifti images, handles some permissions issues, adjusts json files, and creates the events.tsv files for each run from the psychopy csv files. Here are patterns I use in pipeline1.py that is consistent in other pipeline scripts:</p>
 <ul>
 <li>The pipeline scripts call the commands from the <code>commands</code> repository or from the <code>study</code> folder. These scripts are well tested outside the HPC.</li>
@@ -214,7 +216,7 @@ PREAMBLE = [
 <li>I use <code>make_readable_command</code> function to make commands look readable when they are printed anywhere.</li>
 </ul>
 <p>Here is pipeline1.py script using the above patterns:</p>
-<pre><code class="language-python">import os
+<pre><code class="python">import os
 import json
 import random
 import string
@@ -432,6 +434,7 @@ def main():
 if __name__ == '__main__':
     main()
 </code></pre>
+
 <p>All the soe pipeline scripts are found here: <code>/group/jbinder/work/jheffernan/soe/scripts/custom/pipelines</code>.</p>
 <h2 id="other-tips">Other tips<a class="headerlink" href="#other-tips" title="Permanent link">&para;</a></h2>
 <ul>
@@ -443,6 +446,8 @@ if __name__ == '__main__':
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../scripts_temp/" class="btn btn-neutral float-right" title="Source Scripts">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
         <a href="../raw_data_storage/" class="btn btn-neutral" title="Raw Data Storage"><span class="icon icon-circle-arrow-left"></span> Previous</a>
@@ -473,6 +478,8 @@ if __name__ == '__main__':
       
         <span><a href="../raw_data_storage/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
+      
+        <span style="margin-left: 15px"><a href="../scripts_temp/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>

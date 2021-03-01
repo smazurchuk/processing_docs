@@ -9,7 +9,7 @@
   
   
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Scripts - Processing Pipeline</title>
+  <title>Source Scripts - Processing Pipeline</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
 
   <link rel="stylesheet" href="../css/theme.css" />
@@ -18,7 +18,7 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Scripts";
+    var mkdocs_page_name = "Source Scripts";
     var mkdocs_page_input_path = "scripts_temp.md";
     var mkdocs_page_url = null;
   </script>
@@ -51,8 +51,16 @@
                     <li class="toctree-l1"><a class="reference internal" href="../overview/">Overview</a>
                     </li>
                 </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../raw_data_storage/">Raw Data Storage</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../torque_tips/">Torque Tips</a>
+                    </li>
+                </ul>
                 <ul class="current">
-                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Scripts</a>
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Source Scripts</a>
     <ul class="current">
     <li class="toctree-l2"><a class="reference internal" href="#run_tarred_dicom_infopy">run_tarred_dicom_info.py</a>
     </li>
@@ -69,14 +77,6 @@
     <li class="toctree-l2"><a class="reference internal" href="#soe_dimonpy">soe_dimon.py</a>
     </li>
     </ul>
-                    </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../raw_data_storage/">Raw Data Storage</a>
-                    </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../torque_tips/">Torque Tips</a>
                     </li>
                 </ul>
       </div>
@@ -100,7 +100,7 @@
     
       
     
-    <li>Scripts</li>
+    <li>Source Scripts</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -120,7 +120,7 @@
 <h2 id="run_tarred_dicom_infopy"><code>run_tarred_dicom_info.py</code><a class="headerlink" href="#run_tarred_dicom_infopy" title="Permanent link">&para;</a></h2>
 <p><a href="/script_source/run_tarred_dicom_info.py">Source</a>  <br />
 Help Output: </p>
-<pre><code class="language-bash">usage: run_tarred_dicom_info.py [-h] --in_files IN_FILES [IN_FILES ...]
+<pre><code class="bash">usage: run_tarred_dicom_info.py [-h] --in_files IN_FILES [IN_FILES ...]
                                 [--email EMAIL] [--mem MEM]
                                 [--walltime WALLTIME] [--testing]
 
@@ -136,6 +136,7 @@ optional arguments:
   --testing             do not run the command, only print information
                         (default: False)
 </code></pre>
+
 <hr />
 <h2 id="dicom_infor"><code>dicom_info.R</code><a class="headerlink" href="#dicom_infor" title="Permanent link">&para;</a></h2>
 <p><a href="/script_source/dicom_info.R">Source</a>  <br />
@@ -143,7 +144,7 @@ Help Output: </p>
 <h2 id="run_heudiconvpy"><code>run_heudiconv.py</code><a class="headerlink" href="#run_heudiconvpy" title="Permanent link">&para;</a></h2>
 <p><a href="/script_source/run_heudiconv.py">Source</a>  <br />
 Help Output: </p>
-<pre><code class="language-bash">usage: run_heudiconv.py [-h] --participants PARTICIPANTS [PARTICIPANTS ...]
+<pre><code class="bash">usage: run_heudiconv.py [-h] --participants PARTICIPANTS [PARTICIPANTS ...]
                         [--sessions SESSIONS [SESSIONS ...]] [--email EMAIL]
                         [--mem MEM] [--walltime WALLTIME] [--testing]
                         experiment_dir heuristic
@@ -166,11 +167,12 @@ optional arguments:
   --testing             do not run the command, only print information
                         (default: False)
 </code></pre>
+
 <hr />
 <h2 id="cli_adjust_jsonspy"><code>cli_adjust_jsons.py</code><a class="headerlink" href="#cli_adjust_jsonspy" title="Permanent link">&para;</a></h2>
 <p><a href="/script_source/cli_adjust_jsons.py">Source</a>   <br />
 Help Output: </p>
-<pre><code class="language-bash">usage: cli_adjust_jsons.py [-h]
+<pre><code class="bash">usage: cli_adjust_jsons.py [-h]
                            [--participants PARTICIPANTS [PARTICIPANTS ...]]
                            [--hyperband HYPERBAND] [--tr TR]
                            [--slicetiming SLICETIMING [SLICETIMING ...] |
@@ -209,11 +211,12 @@ fmap:
 func+fmap:
   func+fmap options
 </code></pre>
+
 <hr />
 <h2 id="cli_post_heudiconvpy"><code>cli_post_heudiconv.py</code><a class="headerlink" href="#cli_post_heudiconvpy" title="Permanent link">&para;</a></h2>
 <p><a href="/script_source/cli_post_heudiconv.py">Source</a> <br />
 Help Output: </p>
-<pre><code class="language-bash">usage: cli_post_heudiconv.py [-h] --participants PARTICIPANTS
+<pre><code class="bash">usage: cli_post_heudiconv.py [-h] --participants PARTICIPANTS
                              [PARTICIPANTS ...]
                              bids_dir
 
@@ -229,11 +232,12 @@ optional arguments:
                         If not specified, all participants in bids_dir will be
                         corrected
 </code></pre>
+
 <hr />
 <h2 id="run_fmriprep_epilepsypy"><code>run_fmriprep_epilepsy.py</code><a class="headerlink" href="#run_fmriprep_epilepsypy" title="Permanent link">&para;</a></h2>
 <p><a href="/script_source/run_fmriprep_epilepsy.py">Source</a>  <br />
 Help Output: </p>
-<pre><code class="language-bash">usage: run_fmriprep_epilepsy.py [-h] [--nthreads NTHREADS]
+<pre><code class="bash">usage: run_fmriprep_epilepsy.py [-h] [--nthreads NTHREADS]
                                 [--omp-nthreads OMP_NTHREADS] [--email EMAIL]
                                 [--mem MEM] [--walltime WALLTIME] [--testing]
                                 participants [participants ...]
@@ -255,6 +259,7 @@ optional arguments:
   --testing             do not run the command, only print information
                         (default: False)
 </code></pre>
+
 <hr />
 <h2 id="soe_dimonpy"><code>soe_dimon.py</code><a class="headerlink" href="#soe_dimonpy" title="Permanent link">&para;</a></h2>
 <p><a href="/script_source/soe_dimon.py">Source</a>  <br />
@@ -266,10 +271,8 @@ Help Output: </p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../raw_data_storage/" class="btn btn-neutral float-right" title="Raw Data Storage">Next <span class="icon icon-circle-arrow-right"></span></a>
       
-      
-        <a href="../overview/" class="btn btn-neutral" title="Overview"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../torque_tips/" class="btn btn-neutral" title="Torque Tips"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -295,10 +298,8 @@ Help Output: </p>
     <span class="rst-current-version" data-toggle="rst-current-version">
       
       
-        <span><a href="../overview/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../torque_tips/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
-      
-        <span style="margin-left: 15px"><a href="../raw_data_storage/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>

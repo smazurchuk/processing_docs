@@ -51,10 +51,6 @@
                     <li class="toctree-l1"><a class="reference internal" href="../overview/">Overview</a>
                     </li>
                 </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../scripts_temp/">Scripts</a>
-                    </li>
-                </ul>
                 <ul class="current">
                     <li class="toctree-l1 current"><a class="reference internal current" href="./">Raw Data Storage</a>
     <ul class="current">
@@ -71,6 +67,10 @@
                 </ul>
                 <ul>
                     <li class="toctree-l1"><a class="reference internal" href="../torque_tips/">Torque Tips</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../scripts_temp/">Source Scripts</a>
                     </li>
                 </ul>
       </div>
@@ -109,7 +109,7 @@
 <p>We need a lab standard for storing raw dicom and nifti files, because it unifies lab imaging analysis procedures. Finding raw files and working with raw data across studies will be easier. The methods section for fMRI preprocessing in published papers will be a copy/paste plus some minor editing. The standard should minimize hard drive usage, because storage costs money. Lab standards just make sense.</p>
 <h2 id="directory-structure-overview">Directory structure overview<a class="headerlink" href="#directory-structure-overview" title="Permanent link">&para;</a></h2>
 <p>Below is an example directory tree for an experiment/study/project named <code>example</code>. The top level directory is the experiment name. It has 3 subject data sets: <code>001</code> with 2 sessions, <code>002</code> with 1 session, and <code>003</code> with 1 session. Each session has the following scans: <code>T1w</code>, <code>T2w</code>, <code>dwi</code>, <code>1 pair of spin echo images</code>, <code>2 rest</code>, and <code>1 storymath</code>.</p>
-<pre><code class="language-pre">experiment
+<pre><code class="pre">experiment
 |-- bids
 |   |-- sub-001
 |   |   |-- ses-1
@@ -183,6 +183,7 @@
         `-- ses-1
             `-- 003s01.tar.gz
 </code></pre>
+
 <p><code>sourcedata</code> stores the dicom files for all subjects in <code>tar.gz</code> format. <code>bids</code> stores the images in nifti format according to the <a href="https://bids-specification.readthedocs.io/en/stable/">bids specification</a>. <code>hcp</code> stores the images in nifti format that is compatible with the HCP minimal-preprocessing pipeline. All experiments should have the <code>sourcedata</code> and <code>bids</code> directories. <code>hcp</code> is optional and is likely unneeded. If the <code>hcp</code> directory is needed, create the nifti files by hard linking to the nifti files in <code>bids</code> directory so we save hard drive space. Many powerful tools are built requiring data in bids format, and we want to be able to use these tools.</p>
 <h2 id="sourcedata">sourcedata<a class="headerlink" href="#sourcedata" title="Permanent link">&para;</a></h2>
 <p><code>sourcedata</code> stores the dicom files for all subjects in <code>tar.gz</code> format. There are 2 MRI scanners: the 3T pavilion scanner (located in the Froedtert pavilion) and the premier 3T scanner (located in the CIR). Research scans are nearly always uploaded to the <a href="https://gwxnat.rcc.mcw.edu/app/template/Login.vm">research XNAT server</a>. In the rare case of using clinical imagining data, the files are uploaded to the <a href="https://xnat.mcw.edu/xnat/app/template/Login.vm#!">clinical XNAT server</a>. Both permit downloading full sessions as <code>tar.gz</code> files, so do this according to the above tree format. Dicoms should be saved and stored in <code>tar.gz</code> format because it reduces the number of files from very many (there is a dicom file for each slice in a MRI scan) and it compresses the storage used by 5-6 times.</p>
@@ -232,7 +233,7 @@
 <h2 id="dicom-to-bids">dicom to bids<a class="headerlink" href="#dicom-to-bids" title="Permanent link">&para;</a></h2>
 <p>There are multpile strategies to convert dicom files into bids format. Here are some online resources for dicom to bids conversion: <a href="https://andysbrainbook.readthedocs.io/en/latest/OpenScience/OS/BIDS_Overview.html">Andy's Brain Book: BIDS Overview</a> and <a href="http://reproducibility.stanford.edu/bids-tutorial-series-part-1a/">The Stanford Center for REproducible Neuroscience</a>.</p>
 <p>For my dicom-to-bids conversion, I use <a href="https://github.com/nipy/heudiconv">heudiconv</a>. Heudiconv requires creating a <code>heuristic.py</code> file which is a python file coding how to convert and organize the data. Below is a snippet of the <code>heuristic.py</code> file I created for the SOE data:</p>
-<pre><code class="language-python"># * * * LEADING COMMENTS * * *
+<pre><code class="python"># * * * LEADING COMMENTS * * *
 
 # default values
 # : (t1w, {&quot;acq&quot;: &quot;mprage&quot;}, &quot;MPRAGE BW=31.2kHz&quot;),
@@ -450,6 +451,7 @@ def infotodict(seqinfo):
 
     return info
 </code></pre>
+
 <p>The strategy behind my <code>heuristic.py</code> file is to explicitly declare all dicom scans and how to name them according to the bids specification for a single experiment. I prefer this strategy, becuase it can handle all edge cases and it fully documents the dicom to nifti file conversions.</p>
 <p>My <code>heursitic.py</code> file contains 4 sections labeled within the snippet: leading comments, key creation, dict creation, and for loop. Leading comments are comments containing common values for dict creation. In the above example heuristic file, the comments contain comman scans for a single participant in the SOE experiment for all 3 sessions. When a new session for a participant has been completed, the session scans are copied from the comments, pasted into the dict creation section, and the missing values are filled. Key creations creates keys for the info dict. The keys are templates file names for the type of scan and are used as dict keys for info. Dict creation section will likely be the only section edited when a new session is acquired for a participant. The dict <code>pm</code> specifies scans for each participant session. In the above example, the keys in pm uniquely identify a participant scanning session. The keys are a 2-tuple with the dicom <code>PatientID</code> as first value and <code>AcquisitionDate</code> as secon value. The value for the 2-tuple is a dict specifying each dicom scan. The keys are the dicom <code>SeriesNumber</code>s. The values are a 3-tuple: (info key, entities and their values for the scan, the dicom <code>SeriesDescription</code>). The series description is used only for documentation purporses. The last section is the for loop. It cycles through the scans for a patient session and appends them to the lists in info. Heudiconv converts the dicoms to nifti files and names them according to the information contained in the info dict.</p>
 <p>If you do not like how I write my <code>heuristic.py</code> file, this <a href="http://reproducibility.stanford.edu/bids-tutorial-series-part-2a/">tutorial</a> offers a different strategy. Other strategies can be found through a search engine.</p>
@@ -465,7 +467,7 @@ def infotodict(seqinfo):
         <a href="../torque_tips/" class="btn btn-neutral float-right" title="Torque Tips">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../scripts_temp/" class="btn btn-neutral" title="Scripts"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../overview/" class="btn btn-neutral" title="Overview"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -491,7 +493,7 @@ def infotodict(seqinfo):
     <span class="rst-current-version" data-toggle="rst-current-version">
       
       
-        <span><a href="../scripts_temp/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../overview/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
         <span style="margin-left: 15px"><a href="../torque_tips/" style="color: #fcfcfc">Next &raquo;</a></span>
