@@ -8,7 +8,7 @@ This gives some details of the scripts and prints the help if it exists
 
 ## `run_tarred_dicom_info.py` 
  
-[Source](/script_source/run_tarred_dicom_info.py) 	 
+[Source](/processing_docs/script_source/run_tarred_dicom_info.py) 	 
 Help Output: 
 
 ```bash
@@ -31,12 +31,12 @@ optional arguments:
 ---
 ## `dicom_info.R` 
  
-[Source](/script_source/dicom_info.R) 	 
+[Source](/processing_docs/script_source/dicom_info.R) 	 
 Help Output: 
 
 ## `run_heudiconv.py` 
  
-[Source](/script_source/run_heudiconv.py) 	 
+[Source](/processing_docs/script_source/run_heudiconv.py) 	 
 Help Output: 
 
 ```bash
@@ -66,7 +66,7 @@ optional arguments:
 ---
 ## `cli_adjust_jsons.py` 
  
-[Source](/script_source/cli_adjust_jsons.py) 	 
+[Source](/processing_docs/script_source/cli_adjust_jsons.py) 	 
 Help Output: 
 
 ```bash
@@ -112,7 +112,7 @@ func+fmap:
 ---
 ## `cli_post_heudiconv.py` 
  
-[Source](/script_source/cli_post_heudiconv.py) 	 
+[Source](/processing_docs/script_source/cli_post_heudiconv.py) 	 
 Help Output: 
 
 ```bash
@@ -135,7 +135,7 @@ optional arguments:
 ---
 ## `run_fmriprep_epilepsy.py` 
  
-[Source](/script_source/run_fmriprep_epilepsy.py) 	 
+[Source](/processing_docs/script_source/run_fmriprep_epilepsy.py) 	 
 Help Output: 
 
 ```bash
@@ -164,6 +164,6 @@ optional arguments:
 ---
 ## `soe_dimon.py` 
  
-[Source](/script_source/soe_dimon.py) 	 
+[Source](/processing_docs/script_source/soe_dimon.py) 	 
 Help Output: 
 
